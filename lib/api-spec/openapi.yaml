@@ -3,13 +3,27 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Petly Pet Care Platform API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: pets
+    description: Pet profile operations
+  - name: services
+    description: Service booking operations
+  - name: products
+    description: Pet product operations
+  - name: healthcare
+    description: Healthcare operations
+  - name: ngos
+    description: NGO and rescue operations
+  - name: chat
+    description: AI chatbot operations
+  - name: dashboard
+    description: Dashboard summary operations
 paths:
   /healthz:
     get:
@@ -24,6 +38,374 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /pets:
+    get:
+      operationId: listPets
+      tags: [pets]
+      summary: List user's pets
+      responses:
+        "200":
+          description: List of pets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Pet"
+    post:
+      operationId: createPet
+      tags: [pets]
+      summary: Create a new pet profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PetInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pet"
+
+  /pets/{id}:
+    get:
+      operationId: getPet
+      tags: [pets]
+      summary: Get a pet by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Pet details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pet"
+    patch:
+      operationId: updatePet
+      tags: [pets]
+      summary: Update pet profile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PetUpdate"
+      responses:
+        "200":
+          description: Updated pet
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pet"
+    delete:
+      operationId: deletePet
+      tags: [pets]
+      summary: Delete a pet profile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /pets/{id}/vaccinations:
+    get:
+      operationId: listVaccinations
+      tags: [healthcare]
+      summary: List vaccinations for a pet
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of vaccinations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Vaccination"
+    post:
+      operationId: addVaccination
+      tags: [healthcare]
+      summary: Add vaccination record
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VaccinationInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Vaccination"
+
+  /bookings:
+    get:
+      operationId: listBookings
+      tags: [services]
+      summary: List all bookings for the user
+      responses:
+        "200":
+          description: List of bookings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Booking"
+    post:
+      operationId: createBooking
+      tags: [services]
+      summary: Create a new service booking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookingInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+
+  /bookings/{id}:
+    get:
+      operationId: getBooking
+      tags: [services]
+      summary: Get a booking by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Booking details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+    patch:
+      operationId: updateBooking
+      tags: [services]
+      summary: Update booking status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookingUpdate"
+      responses:
+        "200":
+          description: Updated booking
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+    delete:
+      operationId: cancelBooking
+      tags: [services]
+      summary: Cancel a booking
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Cancelled
+
+  /products:
+    get:
+      operationId: listProducts
+      tags: [products]
+      summary: List all products
+      parameters:
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+
+  /products/{id}:
+    get:
+      operationId: getProduct
+      tags: [products]
+      summary: Get a product by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Product details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+
+  /ngos:
+    get:
+      operationId: listNgos
+      tags: [ngos]
+      summary: List all partner NGOs
+      responses:
+        "200":
+          description: List of NGOs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Ngo"
+
+  /ngos/{id}:
+    get:
+      operationId: getNgo
+      tags: [ngos]
+      summary: Get an NGO by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: NGO details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ngo"
+
+  /adoptions:
+    get:
+      operationId: listAdoptions
+      tags: [ngos]
+      summary: List pets available for adoption
+      responses:
+        "200":
+          description: List of adoptable pets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AdoptablePet"
+
+  /chat:
+    post:
+      operationId: sendChatMessage
+      tags: [chat]
+      summary: Send a message to the AI pet care chatbot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChatMessageInput"
+      responses:
+        "200":
+          description: AI response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatResponse"
+
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Get dashboard summary stats
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+
+  /dashboard/upcoming:
+    get:
+      operationId: getUpcomingBookings
+      tags: [dashboard]
+      summary: Get upcoming bookings and vaccination reminders
+      responses:
+        "200":
+          description: Upcoming items
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpcomingItems"
+
+  /health-tips:
+    get:
+      operationId: listHealthTips
+      tags: [healthcare]
+      summary: List pet health tips
+      responses:
+        "200":
+          description: Health tips
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/HealthTip"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +416,293 @@ components:
       required:
         - status
 
+    Pet:
+      type: object
+      required: [id, name, species, breed, age, weight, imageUrl]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        species:
+          type: string
+        breed:
+          type: string
+        age:
+          type: number
+        weight:
+          type: number
+        imageUrl:
+          type: ["string", "null"]
+        gender:
+          type: ["string", "null"]
+        color:
+          type: ["string", "null"]
+        userId:
+          type: string
+        createdAt:
+          type: string
+
+    PetInput:
+      type: object
+      required: [name, species, breed, age, weight]
+      properties:
+        name:
+          type: string
+        species:
+          type: string
+        breed:
+          type: string
+        age:
+          type: number
+        weight:
+          type: number
+        imageUrl:
+          type: ["string", "null"]
+        gender:
+          type: ["string", "null"]
+        color:
+          type: ["string", "null"]
+
+    PetUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        species:
+          type: string
+        breed:
+          type: string
+        age:
+          type: number
+        weight:
+          type: number
+        imageUrl:
+          type: ["string", "null"]
+        gender:
+          type: ["string", "null"]
+        color:
+          type: ["string", "null"]
+
+    Vaccination:
+      type: object
+      required: [id, petId, vaccineName, administeredAt, nextDueAt]
+      properties:
+        id:
+          type: integer
+        petId:
+          type: integer
+        vaccineName:
+          type: string
+        administeredAt:
+          type: string
+        nextDueAt:
+          type: ["string", "null"]
+        vetName:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+
+    VaccinationInput:
+      type: object
+      required: [vaccineName, administeredAt]
+      properties:
+        vaccineName:
+          type: string
+        administeredAt:
+          type: string
+        nextDueAt:
+          type: ["string", "null"]
+        vetName:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+
+    Booking:
+      type: object
+      required: [id, serviceType, status, scheduledAt, petId]
+      properties:
+        id:
+          type: integer
+        serviceType:
+          type: string
+        status:
+          type: string
+        scheduledAt:
+          type: string
+        petId:
+          type: integer
+        petName:
+          type: ["string", "null"]
+        providerName:
+          type: ["string", "null"]
+        price:
+          type: ["number", "null"]
+        notes:
+          type: ["string", "null"]
+        userId:
+          type: string
+        createdAt:
+          type: string
+
+    BookingInput:
+      type: object
+      required: [serviceType, scheduledAt, petId]
+      properties:
+        serviceType:
+          type: string
+        scheduledAt:
+          type: string
+        petId:
+          type: integer
+        providerName:
+          type: ["string", "null"]
+        price:
+          type: ["number", "null"]
+        notes:
+          type: ["string", "null"]
+
+    BookingUpdate:
+      type: object
+      properties:
+        status:
+          type: string
+        scheduledAt:
+          type: string
+        notes:
+          type: ["string", "null"]
+
+    Product:
+      type: object
+      required: [id, name, category, price, imageUrl, description]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        category:
+          type: string
+        price:
+          type: number
+        imageUrl:
+          type: string
+        description:
+          type: string
+        rating:
+          type: ["number", "null"]
+        inStock:
+          type: boolean
+
+    Ngo:
+      type: object
+      required: [id, name, city, description, imageUrl]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        city:
+          type: string
+        description:
+          type: string
+        imageUrl:
+          type: string
+        website:
+          type: ["string", "null"]
+        phone:
+          type: ["string", "null"]
+        petsHelped:
+          type: integer
+
+    AdoptablePet:
+      type: object
+      required: [id, name, species, breed, age, imageUrl, ngoId, ngoName]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        species:
+          type: string
+        breed:
+          type: string
+        age:
+          type: number
+        imageUrl:
+          type: string
+        ngoId:
+          type: integer
+        ngoName:
+          type: string
+        description:
+          type: ["string", "null"]
+        gender:
+          type: ["string", "null"]
+
+    ChatMessageInput:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+        conversationHistory:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChatHistoryItem"
+
+    ChatHistoryItem:
+      type: object
+      required: [role, content]
+      properties:
+        role:
+          type: string
+        content:
+          type: string
+
+    ChatResponse:
+      type: object
+      required: [reply]
+      properties:
+        reply:
+          type: string
+
+    DashboardSummary:
+      type: object
+      required: [totalPets, upcomingBookings, vaccinationsDue, activeServices]
+      properties:
+        totalPets:
+          type: integer
+        upcomingBookings:
+          type: integer
+        vaccinationsDue:
+          type: integer
+        activeServices:
+          type: integer
+
+    UpcomingItems:
+      type: object
+      required: [bookings, vaccinations]
+      properties:
+        bookings:
+          type: array
+          items:
+            $ref: "#/components/schemas/Booking"
+        vaccinations:
+          type: array
+          items:
+            $ref: "#/components/schemas/Vaccination"
+
+    HealthTip:
+      type: object
+      required: [id, title, content, category, imageUrl]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        content:
+          type: string
+        category:
+          type: string
+        imageUrl:
+          type: string
